@@ -24,4 +24,21 @@ In this part, we calculate the betweenness of each edge in the original graph an
 * First, perform a breadth-first search (BFS) of the graph, starting at node X.
 * Next, label each node by the number of shortest paths that reach it from the root. Start by labelling the root 1. Then, from the top down, label each node Y by the sum of the labels of its parents.
 * Calculate for each edge e, the sum over all nodes Y (of the fraction) of the shortest paths from the root X to Y that go through edge e.
-* To complete the betweenness calculation, we have to repeat this calculation for every node as the root and sum the contributions.Finally, we must divide by 2 to get the true betweenness, since every shortest path will be discovered twice, once for each of its endpoints.
+
+To complete the betweenness calculation, we have to repeat this calculation for every node as the root and sum the contributions.Finally, we must divide by 2 to get the true betweenness, since every shortest path will be discovered twice, once for each of its endpoints.
+
+## **Community Detection:**
+We use modularity to identify the communities by taking the graph and all its edges, and then removing edges with the highest betweenness, until the graph has broken into a suitable number of connected components. Thus, we divide the graph into suitable communities, which reaches the global highest modularity.
+
+The formula of modularity is shown below:
+
+𝑸 = ∑s∈S [(# edges within group s) – (expected # edges within group s)]
+
+𝑸(𝑮,𝑺) = (1/(2 * m)) * ∑𝒔∈𝑺 ∑𝒊∈𝒔 ∑𝒋∈𝒔 (Aij − ((ki * kj)/(2 * m)))
+
+According to the Girvan-Newman algorithm, after removing one edge, we should re-compute the betweenness. The “m” in the formula represents the edge number of the original graph. The “A” in the formula is the adjacent matrix of the original graph where Aij is 1 if i connects j, else it is 0. ki is the node degree of node i. In each remove step, 'm', 'A', 'ki' and 'kj' should not be changed. If the community only has one user node, we still regard it as a valid community. We save the results to an output text file.
+
+## **Output file format:**
+The betweenness calculation output is saved in the path specified by the <betweenness_output_file_path> parameter in the execution script. This output is saved in a txt file which contains the betweenness of each edge in the original graph. The format of each line is (‘user_id1’, ‘user_id2’), betweenness value. The results are firstly sorted by the betweenness values in the descending order and then the first user_id in the tuple in lexicographical order (the user_id is of type string). The two user_ids in each tuple are also in lexicographical order.
+
+The community detection output is saved in the path specified by the <community_output_file_path> parameter in the execution script. The output which is the resulting communities are saved in a txt file. Each line represents one community and the format is: ‘user_id1’, ‘user_id2’, ‘user_id3’, ‘user_id4’, .... The results are firstly sorted by the size of communities in the ascending order and then the first user_id in the community in lexicographical order (the user_id is of type string). The user_ids in each community are also in the lexicographical order. If there is only one node in the community, we still regard it as a valid community.
